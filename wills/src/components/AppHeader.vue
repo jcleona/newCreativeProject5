@@ -21,10 +21,10 @@
             <!-- <a class="nav-link" href="#">Will</a> -->
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" style = "color: black;" to="/"> View Will </router-link>
+            <router-link class="nav-link" style = "color: black;" to="/ViewWill"> View Will </router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" style = "color: black;" to="/"> List Wills </router-link>
+            <router-link class="nav-link" style = "color: black;" to="/ListWills"> List Wills </router-link>
           </li>
         </ul>
       </div>
@@ -96,12 +96,6 @@
      loginError: function() {
        return this.$store.getters.loginError;
      },
-     numberFollowing: function() {
-       return this.$store.getters.following.length;
-     },
-     numberFollowers: function() {
-       return this.$store.getters.followers.length;
-     }
    },
    methods: {
      search: function() {

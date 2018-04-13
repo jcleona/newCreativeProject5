@@ -40,13 +40,14 @@
    },
    methods: {
      register: function() {
-
- 
        let table = require( 'datasets-us-states-abbr-names' );
        function getState( abbr ) {
-         var st;
-         abbr.toUpperCase();
-         st = table[ abbr ];
+         let st;
+         console.log('abbr: ', abbr);
+         console.log('in getState');
+         let upperAbbr = abbr.toUpperCase();
+         console.log('upperAbbr: ', upperAbbr);
+         st = table[ upperAbbr ];
          if ( st === void 0 ) {
           st = abbr;
          // throw new Error( 'unrecognized state abbreviation. Value: `' + abbr + '`.' );
@@ -57,6 +58,8 @@
       console.log( getState( this.stateAbbr ) );
       this.state = getState( this.stateAbbr );
       console.log('this.state: ', this.state, 'this.stateAbbr: ', this.stateAbbr);
+      let str = 'hello';
+      console.log(str.toUpperCase());
       // this.addUser();
       this.userSubmitted = true;
 

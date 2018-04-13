@@ -9,7 +9,6 @@
 
 <script>
  import moment from 'moment';
- import linkify from './linkify.js';
  export default {
    name: 'FeedList',
    props: ['feed'],

@@ -30,7 +30,7 @@ app.post('/api/login', (req, res) => {
     return [bcrypt.compare(req.body.password, user.hash),user];
   }).spread((result,user) => {
     if (result)
-      res.status(200).json({user:{username:user.username,name:user.name,id:user.id}});
+      res.status(200).json({user:{username:user.username,name:user.name,city: user.city, state:user.state, stateAbbr: user.stateAbbr, id:user.id}});
     else
       res.status(403).send("Invalid credentials");
     return;
@@ -44,15 +44,7 @@ app.post('/api/login', (req, res) => {
 
 // Users //
 
-app.get('/api/users/:id', (req, res) => {
-  let id = parseInt(req.params.id);
-  // get user record
-  knex('users').where('id',id).first().select('username','name','id').then(user => {
-    res.status(200).json({user:user});
-  }).catch(error => {
-    res.status(500).json({ error });
-  });
-});
+
 
 
 app.post('/api/users', (req, res) => {
@@ -115,6 +107,28 @@ app.get('/api/users/:id/tweets', (req, res) => {
     });
 });
 
+app.get('/api/users/:id', (req, res) => {
+  let id = parseInt(req.params.id);
+  // get user record
+  knex('users').where('id',id).first().select('username','name','id','city','state').then(user => {
+    res.status(200).json({user:user});
+  }).catch(error => {
+    res.status(500).json({ error });
+  });
+});
+
+app.get('/api/wills/:id', (req, res) => {
+  let id = parseInt(req.params.id);
+  // get user record
+  knex('wills').where('id',id).first().select('title','beneficiary','executor').then(will => {
+    res.status(200).json({will:will});
+  }).catch(error => {
+    res.status(500).json({ error });
+  });
+});
+
+
+
 app.post('/api/users/:id/tweets', (req, res) => {
   let id = parseInt(req.params.id);
   knex('users').where('id',id).first().then(user => {
@@ -123,6 +137,22 @@ app.post('/api/users/:id/tweets', (req, res) => {
     return knex('tweets').where('id',ids[0]).first();
   }).then(tweet => {
     res.status(200).json({tweet:tweet});
+    return;
+  }).catch(error => {
+    console.log(error);
+    res.status(500).json({ error });
+  });
+});
+
+
+app.post('/api/users/:id/wills', (req, res) => {
+  let id = parseInt(req.params.id);
+  knex('users').where('id',id).first().then(user => {
+    return knex('wills').insert({user_id: id, title:req.body.title, beneficiary:req.body.beneficiary, executor:req.body.executor});
+  }).then(ids => {
+    return knex('wills').where('id',ids[0]).first();
+  }).then(will => {
+    res.status(200).json({will:will});
     return;
   }).catch(error => {
     console.log(error);
@@ -218,56 +248,56 @@ app.delete('/api/users/:id/tweets/:tweetId', (req, res) => {
 //   });
 // });
 
-// unfollow someone
-app.delete('/api/users/:id/follow/:follower', (req,res) => {
-  // id of the person who is following
-  let id = parseInt(req.params.id);
-  // id of the person who is being followed
-  let follows = parseInt(req.params.follower);
-  // make sure both of these users exist
-  knex('users').where('id',id).first().then(user => {
-    return knex('users').where('id',follows).first();
-  }).then(user => {
-    // delete the entry in the followers table
-    return knex('followers').where({'user_id':id,follows_id:follows}).first().del();
-  }).then(ids => {
-    res.sendStatus(200);
-    return;
-  }).catch(error => {
-    console.log(error);
-    res.status(500).json({ error });
-  });
-});
+// // unfollow someone
+// app.delete('/api/users/:id/follow/:follower', (req,res) => {
+//   // id of the person who is following
+//   let id = parseInt(req.params.id);
+//   // id of the person who is being followed
+//   let follows = parseInt(req.params.follower);
+//   // make sure both of these users exist
+//   knex('users').where('id',id).first().then(user => {
+//     return knex('users').where('id',follows).first();
+//   }).then(user => {
+//     // delete the entry in the followers table
+//     return knex('followers').where({'user_id':id,follows_id:follows}).first().del();
+//   }).then(ids => {
+//     res.sendStatus(200);
+//     return;
+//   }).catch(error => {
+//     console.log(error);
+//     res.status(500).json({ error });
+//   });
+// });
 
-// get list of people you are following
-app.get('/api/users/:id/follow', (req,res) => {
-  // id of the person we are interested in
-  let id = parseInt(req.params.id);
-  // get people this person is following
-  knex('users').join('followers','users.id','followers.follows_id')
-    .where('followers.user_id',id)
-    .select('username','name','users.id').then(users => {
-      res.status(200).json({users:users});
-    }).catch(error => {
-      console.log(error);
-      res.status(500).json({ error });
-    });
-});
+// // get list of people you are following
+// app.get('/api/users/:id/follow', (req,res) => {
+//   // id of the person we are interested in
+//   let id = parseInt(req.params.id);
+//   // get people this person is following
+//   knex('users').join('followers','users.id','followers.follows_id')
+//     .where('followers.user_id',id)
+//     .select('username','name','users.id').then(users => {
+//       res.status(200).json({users:users});
+//     }).catch(error => {
+//       console.log(error);
+//       res.status(500).json({ error });
+//     });
+// });
 
-// get list of people who are following you
-app.get('/api/users/:id/followers', (req,res) => {
-  // id of the person we are interested in
-  let id = parseInt(req.params.id);
-  // get people who are following of this person
-  knex('users').join('followers','users.id','followers.user_id')
-    .where('followers.follows_id',id)
-    .select('username','name','users.id').then(users => {
-      res.status(200).json({users:users});
-    }).catch(error => {
-      console.log(error);
-      res.status(500).json({ error });
-    });
-});
+// // get list of people who are following you
+// app.get('/api/users/:id/followers', (req,res) => {
+//   // id of the person we are interested in
+//   let id = parseInt(req.params.id);
+//   // get people who are following of this person
+//   knex('users').join('followers','users.id','followers.user_id')
+//     .where('followers.follows_id',id)
+//     .select('username','name','users.id').then(users => {
+//       res.status(200).json({users:users});
+//     }).catch(error => {
+//       console.log(error);
+//       res.status(500).json({ error });
+//     });
+// });
 
 // get the tweets of those you are following
 // use limit to limit the results to a certain number

@@ -8,6 +8,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     user: {},
+    will: {},
     loggedIn: false,
     loginError: '',
     registerError: '',
@@ -21,6 +22,7 @@ export default new Vuex.Store({
   },
   getters: {
     user: state => state.user,
+    will: state => state.will,
     loggedIn: state => state.loggedIn,
     loginError: state => state.loginError,
     registerError: state => state.registerError,
@@ -44,6 +46,9 @@ export default new Vuex.Store({
     setUser (state, user) {
       state.user = user;
     },
+    setWill (state, will) {
+      state.will = will;
+    },
     setLogin (state, status) {
       state.loggedIn = status;
     },
@@ -61,18 +66,6 @@ export default new Vuex.Store({
     },
     setFeedView (state, feed) {
       state.feedView = feed;
-    },
-    setFollowing (state, following) {
-      state.following = following;
-    },
-    setFollowers (state, followers) {
-      state.followers = followers;
-    },
-    setFollowingView (state, following) {
-      state.followingView = following;
-    },
-    setFollowersView (state, followers) {
-      state.followersView = followers;
     },
   },
   actions: {
@@ -131,6 +124,13 @@ export default new Vuex.Store({
 	console.log("getUser failed:",err);
       });
     },
+    getWill(context,will) {
+      return axios.get("/api/wills/" + will.id).then(response => {
+  context.commit('setWill',response.data.will);
+      }).catch(err => {
+  console.log("getWill failed:",err);
+      });
+    },
     // get tweets of a user, must supply {id:id} of user you want to get tweets for
     getUserTweets(context,user) {
       return axios.get("/api/users/" + user.id + "/tweets").then(response => {
@@ -147,10 +147,21 @@ export default new Vuex.Store({
 	console.log("addTweet failed:",err);
       });
     },
+  addWill(context,will) {
+      console.log('in addWill to add a will for user.id: ', context.state.user.id, 'with title: ', will.title);
+      return axios.post("/api/users/" + context.state.user.id + "/wills",will).then(response => {
+      // return context.dispatch('getFeed');
+      console.log('response.data.will: ', response.data.will);
+	    context.commit('setWill',response.data.will);
+      console.log('after adding to database will: ', response.data.will);
+      }).catch(err => {
+      console.log("addWill failed:",err);
+      });
+    },
     // Searching //
     doSearch(context,keywords) {
       return axios.get("/api/tweets/search?keywords=" + keywords).then(response => {
-	context.commit('setFeed',response.data.tweets);
+  context.commit('setFeed',response.data.tweets);
       }).catch(err => {
 	console.log("doSearch failed:",err);
       });
@@ -204,6 +215,15 @@ export default new Vuex.Store({
 	console.log("getFeed failed:",err);
       });
     },
+
+  // getWills(context) {
+  //     return axios.get("/api/users/" + context.state.user.id + "/feed").then(response => {
+  // context.commit('setFeed',response.data.tweets);
+  //     }).catch(err => {
+  // console.log("getFeed failed:",err);
+  //     });
+  //   },
+
     // get list of people you are following
     getFollowingView(context,user) {
       return axios.get("/api/users/" + user.id + "/follow").then(response => {

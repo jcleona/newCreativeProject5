@@ -111,7 +111,8 @@ export default {
       // property: '',
       userSubmitted: false,
       readyWill: false,
-      willParts: []
+      willParts: [],
+      willID: '',
     }
   },
   computed: {
@@ -119,7 +120,9 @@ export default {
      user: function() {
        return this.$store.getters.user;
      },
-
+     will: function() {
+       return this.$store.getters.will;
+     },
 
      // users: function() {
      //   return this.$store.getters.users;
@@ -131,34 +134,29 @@ export default {
      // }
   },
   created() {
+         // this.$store.dispatch('getFeed');
      // this.$store.dispatch('getUser',{id:this.$route.params.userID});
      console.log('user.id: ', this.user.id);
      console.log('user: ', this.user);
      this.userSubmitted = false
   }, 
   methods: {
-     addWill: function() {
-       let table = require( 'datasets-us-states-abbr-names' );
-       function getState( abbr ) {
-         var st;
-         abbr.toUpperCase();
-         st = table[ abbr ];
-         if ( st === void 0 ) {
-          st = abbr;
-         // throw new Error( 'unrecognized state abbreviation. Value: `' + abbr + '`.' );
-       }
-       return st;
-      }
-      console.log( getState( 'MO' ) );
-      console.log( getState( this.stateAbbr ) );
-      this.state = getState( this.stateAbbr );
-      console.log('this.state: ', this.state, 'this.stateAbbr: ', this.stateAbbr);
-      this.addUser();
-      this.userSubmitted = true;
-    },
+
     newPage: function() {
-      router.push({ name: 'View Will', params: { userId: this.user.id} });
-      console.log('back from addUser with user.id: ', this.user.id);
+
+      console.log('in newPage function')
+          //   router.push({ name: link.name, params: link.params})
+          // } ,;
+          // logout: function ( ) {
+          //   $.ajax({
+          //     url: this.url + 'auth/logout',
+          //     success: data => {
+          //       router.push({name: 'Auth'});
+      // let willID = this.will.id;
+      console.log('this.will.id', this.will.id,'this.id',this.id, 'will: ', this.will);
+      // console.log('willID: ', willID, ' this.user.id: ', this.user.id);
+      router.push({ name: 'ViewWill', params: { willID: this.will.id} });
+      console.log('in newPage function with user.id: ', this.user.id);
     },
     addUser: function() {
       console.log('in addUser');
@@ -184,20 +182,30 @@ export default {
       this.$store.dispatch('getUsers');
      },
 
-    editUser: function(item) {
-      this.$store.dispatch('updateUser',{
-        id: user.id,
-        name: user.name,
-        });
-      },
-    deleteItem: function(item) {
-      this.$store.dispatch('deleteUser',{
-        id: user.id
-        });
-      }, 
+
+    // addWill: function() {
+    //   console.log('IN addWill FUNCTION, beneficiary: ' this.user.beneficiary);
+    //    this.$store.dispatch('addWill',{
+    //      user.id: this.user.id,
+    //      user.title: this.user.title,
+    //      user.beneficiary: this.user.beneficiary,
+    //      user.executor: this.user.executor,
+    //    });
+   //     .then(tweet => {
+   // // this.text = "";
+   // //     });
+   //    this.userSubmitted = true;
+   //  },
 
     buildWill: function () {
-      console.log ('in buildWill function');
+      console.log('in buildWill function: ', this.will);
+
+         this.$store.dispatch('addWill',{
+         user_id: this.user.id,
+         title: this.title,
+         beneficiary: this.beneficiary,
+         executor: this.executor,
+       });
 
 
       this.willParts.splice(0, 1, 'LAST WILL AND TESTAMENT OF: ' + this.user.name);
@@ -211,10 +219,11 @@ export default {
       this.willParts.splice(7, 1, 'II. If the beneficiary named in 3.I does not survive me by thirty (30) days, then I give the rest and residue of my estate to those persons who would have taken said property under the interstate laws of the State of ' + this.user.state + '.');
       this.willParts.splice(8, 1, '5. I nominate ' + this.executor + ' as Executor of this Will, to serve without bond. The term "my Executor" as used in this Will shall include any personal representative of my estate.');
       this.willParts.splice(9, 1, 'Signature of ' + this.user.name + ': ___________________________________');
-      this.willParts.splice(10, 1, 'On the date written below, ' + this.user.name + ' declared to us, that this instrument, consisting of these pages including the page signed by us as witnesses, was his or her Will and requested us to act as witnesses to it. He or she thereupon signed this Will in our presence. We declare under penalty of perjury that the foregoing is true and correct and that this attestation and this declaration are executed on ____________________ (date signed)');
+      this.willParts.splice(10, 1, 'On the date written below, ' + this.user.name + ' declared to us, that this instrument, consisting of these pages, was his or her Will and requested us to act as witnesses to it. He or she thereupon signed this Will in our presence. We declare under penalty of perjury that the foregoing is true and correct and that this attestation and this declaration are executed on ____________________ (date signed)');
        this.willParts.splice(11, 1, 'Signature of witness: ________________________________________');
        this.willParts.splice(12, 1, 'Signature of witness: ________________________________________');
        this.readyWill = true;
+       this.userSubmitted = true;
     }
   },
 }
