@@ -94,6 +94,19 @@ app.delete('/api/users/:id', (req, res) => {
 
 // User Tweets //
 
+// app.get('/api/users/:id/tweets', (req, res) => {
+//   let id = parseInt(req.params.id);
+//   knex('users').join('tweets','users.id','tweets.user_id')
+//     .where('users.id',id)
+//     .orderBy('created','desc')
+//     .select('tweet','username','name','created').then(tweets => {
+//       res.status(200).json({tweets:tweets});
+//     }).catch(error => {
+//       console.log(error);
+//       res.status(500).json({ error });
+//     });
+// });
+
 app.get('/api/users/:id/tweets', (req, res) => {
   let id = parseInt(req.params.id);
   knex('users').join('tweets','users.id','tweets.user_id')
@@ -107,13 +120,21 @@ app.get('/api/users/:id/tweets', (req, res) => {
     });
 });
 
-app.get('/api/users/:id', (req, res) => {
+app.get('/api/wills/:id/wills', (req, res) => {
   let id = parseInt(req.params.id);
-  // get user record
-  knex('users').where('id',id).first().select('username','name','id','city','state').then(user => {
-    res.status(200).json({user:user});
+console.log('in app.get /api/wills/:id/wills in server.js with id: ', id);
+  knex('users').join('wills','users.id','wills.user_id')
+    .where('users.id',id)
+    .orderBy('title','desc')
+    .select('title','wills.id').then(wills => {
+
+  // get wills
+  // knex('wills').where('id',id).select('title','id').then(will => {
+    res.status(200).json({wills:wills});
+    console.log('returned from app.get wills with wills: ', wills);
   }).catch(error => {
     res.status(500).json({ error });
+    console.log('returned from app.get wills with error: ');
   });
 });
 
@@ -129,20 +150,20 @@ app.get('/api/wills/:id', (req, res) => {
 
 
 
-app.post('/api/users/:id/tweets', (req, res) => {
-  let id = parseInt(req.params.id);
-  knex('users').where('id',id).first().then(user => {
-    return knex('tweets').insert({user_id: id, tweet:req.body.tweet, created: new Date()});
-  }).then(ids => {
-    return knex('tweets').where('id',ids[0]).first();
-  }).then(tweet => {
-    res.status(200).json({tweet:tweet});
-    return;
-  }).catch(error => {
-    console.log(error);
-    res.status(500).json({ error });
-  });
-});
+// app.post('/api/users/:id/tweets', (req, res) => {
+//   let id = parseInt(req.params.id);
+//   knex('users').where('id',id).first().then(user => {
+//     return knex('tweets').insert({user_id: id, tweet:req.body.tweet, created: new Date()});
+//   }).then(ids => {
+//     return knex('tweets').where('id',ids[0]).first();
+//   }).then(tweet => {
+//     res.status(200).json({tweet:tweet});
+//     return;
+//   }).catch(error => {
+//     console.log(error);
+//     res.status(500).json({ error });
+//   });
+// });
 
 
 app.post('/api/users/:id/wills', (req, res) => {
@@ -160,20 +181,32 @@ app.post('/api/users/:id/wills', (req, res) => {
   });
 });
 
-/*
-app.delete('/api/users/:id/tweets/:tweetId', (req, res) => {
+
+app.delete('/api/wills/:id', (req, res) => {
   let id = parseInt(req.params.id);
-  let tweetId = parseInt(req.params.tweetId);
-  knex('users').where('id',id).first().then(user => {
-    return knex('tweets').where({'user_id':id,id:tweetId}).first().del();
-  }).then(tweets => {
+  console.log('in app.delete', id);
+  knex('wills').where('id',id).first().then(user => {
+    return knex('wills').where({'id':id,}).first().del();
+  }).then(wills => {
     res.sendStatus(200);    
   }).catch(error => {
     console.log(error);
     res.status(500).json({ error });
   });
 });
-*/
+
+// app.delete('/api/users/:id', (req, res) => {
+//   let id = parseInt(req.params.id);
+//   console.log('id to delete: ', id);
+//   let removeIndex = users.map(user => { return user.id; }).indexOf(id);
+//   if (removeIndex === -1) {
+//     res.status(404).send("Sorry, that user doesn't exist");
+//     return;
+//   }
+//   users.splice(removeIndex, 1);
+//   console.log('users after delete: ', users);
+//   res.sendStatus(200);
+// });
 
 // All Tweets //
 

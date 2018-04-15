@@ -1,9 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import HomePage from '@/components/HomePage'
-// import SearchResults from '@/components/SearchResults'
-import HashTag from '@/components/HashTag'
-import UserPage from '@/components/UserPage'
 import BuildWill from '@/components/BuildWill'
 import ViewWill from '@/components/ViewWill'
 import ListWills from '@/components/ListWills'
@@ -18,16 +15,11 @@ export default new Router({
       name: 'HomePage',
       component: HomePage
     },
-    {
-      path: '/hashtag/:hashtag',
-      name: 'HashTag',
-      component: HashTag
-    },
-    {
-      path: '/user/:userID',
-      name: 'UserPage',
-      component: UserPage
-    },
+    // {
+    // //   path: '/user/:userID',
+    // //   name: 'UserPage',
+    // //   component: UserPage
+    // // },
     {
       path: '/buildwill',
       name: 'BuildWill',
@@ -43,15 +35,10 @@ export default new Router({
       name: 'ViewWill',
       component: ViewWill
     },
-        {
+    {
       path: '/listwills',
       name: 'ListWills',
       component: ListWills
     },
-    // {
-    //   path: '/user/:userID',
-    //   name: 'UserPage',
-    //   component: UserPage
-    // },
   ]
 })

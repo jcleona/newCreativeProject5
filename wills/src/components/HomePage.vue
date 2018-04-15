@@ -11,11 +11,10 @@
 
 <script>
  import WelcomePage from './WelcomePage';
- import UserFeed from './UserFeed';
  import BuildWill from './BuildWill';
  export default {
    name: 'HomePage',
-   components: {WelcomePage,UserFeed,BuildWill},
+   components: {WelcomePage,BuildWill},
    computed: {
      loggedIn: function() {
        return this.$store.getters.loggedIn;

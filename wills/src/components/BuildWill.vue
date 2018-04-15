@@ -25,7 +25,7 @@
 
     <div id="willForm" class="container">
     <form>
-      <p>Start your will by filling out the following information: <p>
+      <p>Finish your will by filling out the following information: <p>
       <div class="form-group">
         <label for="FormControlInput0">Title</label>
         <input v-model="title" type="text" class="form-control" id="FormControlInput0" placeholder="Give this will a title...">
@@ -70,9 +70,9 @@
       <div style = "background-color: Gainsboro;" class="text-center form-group form-control btn-outline-secondary">
         <button type="submit" v-on:click.prevent="buildWill" class="btn btn-default">Submit</button><br>
       </div>
-      <div v-if="userSubmitted" style = "background-color: Gainsboro;" class="text-center form-group form-control btn-outline-secondary">
+<!--       <div v-if="userSubmitted" style = "background-color: Gainsboro;" class="text-center form-group form-control btn-outline-secondary">
         <button type="submit" v-on:click.prevent="buildWill" class="btn btn-default">Click Here to see your will below.</button><br>
-      </div>
+      </div> -->
       <div v-if="userSubmitted"  style = "background-color: Gainsboro;" class="text-center form-group form-control btn-outline-secondary">
         <button type="submit" v-on:click.prevent="newPage" class="btn btn-default">Click here to see your will in a new page.</button><br>
       </div>

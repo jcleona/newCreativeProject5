@@ -12,13 +12,9 @@
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
             <router-link class="nav-link" style = "color: black;" to="/"> Home </router-link>
-            <!-- <a class="nav-link" href="/">Home  -->
-              <!-- <span class="sr-only">(current)</span> -->
-            </a>
           </li>
           <li class="nav-item">
             <router-link class="nav-link" style = "color: black;" to="/BuildWill"> Build Will </router-link>
-            <!-- <a class="nav-link" href="#">Will</a> -->
           </li>
           <li class="nav-item">
             <router-link class="nav-link" style = "color: black;" to="/ViewWill"> View Will </router-link>
@@ -26,34 +22,22 @@
           <li class="nav-item">
             <router-link class="nav-link" style = "color: black;" to="/ListWills"> List Wills </router-link>
           </li>
+
+
+          <li class="nav-item" v-if="loggedIn">
+            <router-link class="nav-link" style = "color: black;" to="/" @click="logout" href="#"> Logout </router-link>
+          </li>
         </ul>
       </div>
     </nav>
-</div>
+  </div>
 
-      <!-- <a  style = "color: black;" href="#">EasyWill</a> -->
-      <div>
-<!--         <ul>
-          <li>
-          </li>
-          <li>
-            <a  style = "color: black;" href="#/Will">Will</a>
-          </li>
-          <li class="nav-item">
-            <a  style = "color: black;" class="nav-link" href="#/ViewWill">View Will</a>
-          </li>
-          <li class="nav-item">
-            <a  style = "color: black;" class="nav-link" href="#/ListWills">List Wills</a>
-          </li>
-        </ul> -->
-      </div>
-    </nav>
+  </nav>
 
 
     <div id="container">
       <ul id="menu">
         <li><img id="scroll" src="../assets/scroll2.png"/></li>
-        <li><router-link to="/">Home</router-link></li>
         <li class="right" v-if="loggedIn">
   	      <router-link :to="{ name: 'BuildWill', params: {userID: user.id}}">{{user.username}}</router-link> <a @click="logout" href="#">Logout</a></p>
         </li>

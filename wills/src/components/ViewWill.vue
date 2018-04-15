@@ -25,7 +25,7 @@
     <div class="container">
       <div>
         <h2 class="text-center" v-if="!noUserData">Viewing Will Titled: {{will.title}}</h2><br>
-        <h1 class="text-center" v-if="noUserData">Please login and then select "Build Will" in the menu at the top to enter your information.</h1>
+        <h1 class="text-center" v-if="noUserData">Please login if needed  and then select "Build Will" in the menu at the top to enter your information.</h1>
       </div>
     <br>
     <div>
@@ -120,10 +120,8 @@ export default {
     getUsers: function() {
       this.$store.dispatch('getUsers');
      },
-    deleteItem: function(user) {
-      this.$store.dispatch('deleteUser',{
-        id: user.id
-        });
+    deleteItem: function(id) {
+      this.$store.dispatch('deleteUser', id);
       }, 
 
     buildWill: function () {
