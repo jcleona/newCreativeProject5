@@ -2,7 +2,8 @@
   <div class="text-left">
     <div class="container">
       <div>
-          <br><h1 class="text-center">Wills</h1><br>
+        <br><h1 class="text-center">Wills</h1><br>
+        <div v-if="loggedIn">
         <table class="table table-hover">
           <thead>
             <tr>
@@ -21,9 +22,12 @@
             </tr>
           </tbody>
         </table>
+       </div>
+      <div v-else>
+       <br><br><h2>Please login and then click 'List Wills' to see your wills.</h2>
       </div>
-
- </div>
+   </div>
+  </div>
  </div>
 </template>
 <script>
@@ -33,30 +37,17 @@ export default {
   props: ['users', 'wills'],
   data () {
     return {
-      name: '',
-      email: '',
-      address: '',
-      city: '',
-      state: '',
-      stateAbbr: '',
-      zip: '',
-      beneficiary: '',
-      executor: '',
-      property: '',
       signed: false,
-      readyWill: false,
-
     }
   },
   computed: {
+     loggedIn: function() {
+       return this.$store.getters.loggedIn;
+     },
      user: function() {
        return this.$store.getters.user;
        console.log('computed user: ', user);
      },
-     // users: function() {
-     //   return this.$store.getters.users;
-     //   console.log('computed users: ', users);
-     // },
      will: function() {
        return this.$store.getters.will;
      },
@@ -64,38 +55,14 @@ export default {
        return this.$store.getters.wills;
      }, 
   },
-   created: function() {
-    console.log('in created of ListWills');
-     // this.getWills();
-     console.log('this.user.id: ', this.user.id);
-     console.log('this.will.id: ', this.will.id);
-    this.$store.dispatch('getWills', this.will.id);
-
-     // this.$store.dispatch('getUser',{id:this.will.user_id});
+  created: function() {
+     console.log('in created of ListWills');
+     this.$store.dispatch('getWills', this.will.id);
    },
   methods: {
-    // updateWill: function(user) {
-    //   this.$store.dispatch('updateWill',{
-    //     id: user.id,
-    //     signed: !will.signed,
-    //    }).then(response => {
-    //     return true;
-    //    }).catch(err => {
-    //    });
-    //  },
-    // getUser: function(id) {
-    //   this.$store.dispatch('getUser',{
-    //     // id: user.id
-    //     id: this.id,
-    //     });
-    //   // console.log (user);
-    //  },
     getWills: function() {
       this.$store.dispatch('getWills');
      },
-    // deleteWill: function(id) {
-    //   this.$store.dispatch('deleteWill',id);
-    //   }, 
     deleteWill: function(id) {
       console.log('just before dispatching deleteWill with id: ', id);
       this.$store.dispatch('deleteWill',id);
@@ -120,22 +87,4 @@ li {
 a {
   color: #42b983;
 }
-/*.footer {
-   position: fixed;
-   left: 0;
-   bottom: 0;
-   padding-top: 16px;
-   width: 100%;
-   background-color: DarkTurquoise ;
-   color: black !important;
-   text-align: center;
-}*/
-/*#git {
-  width: 1.4vw;
-  height: 1.4vw;
-}*/
-/*input[type=checkbox] {
-     transform: scale(2);
-     margin-left: 16px;
- }*/
 </style>

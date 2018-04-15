@@ -25,8 +25,6 @@ export default new Vuex.Store({
     loggedIn: state => state.loggedIn,
     loginError: state => state.loginError,
     registerError: state => state.registerError,
-    feed: state => state.feed,
-    feedView: state => state.feedView,
     userView: state => state.userView,
   },
   mutations: {
@@ -91,21 +89,19 @@ login(context,user) {
       });
     },
  logout(context,user) {
-      context.commit('setUser', {});
-      context.commit('setWill', {});
-      context.commit('setLogin',false);
+    context.commit('setUser', {});
+    context.commit('setWill', {});
+    context.commit('setLogin',false);
     },
-    // Users //
-    // get a user, must supply {username: username} of user you want to get
  getUser(context,user) {
-      return axios.get("/api/users/" + user.id).then(response => {
+    return axios.get("/api/users/" + user.id).then(response => {
   	context.commit('setUserView',response.data.user);
         }).catch(err => {
   	console.log("getUser failed:",err);
       });
     },
  getWill(context,user) {
-      return axios.get("/api/wills/" + context.state.will.id).then(response => {
+    return axios.get("/api/wills/" + context.state.will.id).then(response => {
     context.commit('setWill',response.data.will);
         }).catch(err => {
     console.log("getWill failed:",err);
@@ -125,7 +121,6 @@ login(context,user) {
   addWill(context,will) {
       console.log('in addWill to add a will for user.id: ', context.state.user.id, 'with title: ', will.title);
       return axios.post("/api/users/" + context.state.user.id + "/wills",will).then(response => {
-      // return context.dispatch('getFeed');
       console.log('response.data.will: ', response.data.will);
 	    context.commit('setWill',response.data.will);
       console.log('after adding to database will: ', response.data.will);
@@ -135,56 +130,12 @@ login(context,user) {
     },
  
   deleteWill(context,id) {
-    // console.log('in deleteWill with id: ', will.id);
     console.log('in deleteWill with id: ', id);
       return axios.delete("/api/wills/" + id).then(response => {
-	context.dispatch('getWills');
+	  context.dispatch('getWills');
       }).catch(err => {
-	console.log("deleteWill failed:",err);
+	  console.log("deleteWill failed:",err);
       });
     },
-
-    // deleteUser(context, id) {
-    //   axios.delete("/api/users/" + id).then(response => {
-    //   return context.dispatch('getWills');
-    //   }).catch(err => {
-    //   });
-    // },
-
-
-
- //    getFeed(context) {
- //      return axios.get("/api/users/" + context.state.user.id + "/feed").then(response => {
-	// context.commit('setFeed',response.data.tweets);
- //      }).catch(err => {
-	// console.log("getFeed failed:",err);
- //      });
- //    },
-
-  // getWills(context) {
-  //     return axios.get("/api/users/" + context.state.user.id + "/feed").then(response => {
-  // context.commit('setFeed',response.data.tweets);
-  //     }).catch(err => {
-  // console.log("getFeed failed:",err);
-  //     });
-  //   },
-
-    // get list of people you are following
- //    getFollowingView(context,user) {
- //      return axios.get("/api/users/" + user.id + "/follow").then(response => {
-	// context.commit('setFollowingView',response.data.users);	
- //      }).catch(err => {
-	// console.log("following failed:",err);
- //      });
- //    },
- //    // get list of people who are following you
- //    getFollowersView(context,user) {
- //      return axios.get("/api/users/" + user.id + "/followers").then(response => {
-	// context.commit('setFollowersView',response.data.users);
- //      }).catch(err => {
-	// console.log("following failed:",err);
- //      });
- //    },
-
   }
 });

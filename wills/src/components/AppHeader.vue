@@ -4,7 +4,6 @@
   <div class="text-left">
     <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-warning">
       <a id="brand" class="navbar-brand">EasyWill</a>
-    
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -22,50 +21,40 @@
           <li class="nav-item">
             <router-link class="nav-link" style = "color: black;" to="/ListWills"> List Wills </router-link>
           </li>
-
-
           <li class="nav-item" v-if="loggedIn">
-            <router-link class="nav-link" style = "color: black;" to="/" @click="logout" href="#"> Logout </router-link>
+            <router-link class="nav-link"  to="/"><a style = "color: black;" @click="logout" >Logout</a></router-link>
           </li>
         </ul>
       </div>
     </nav>
   </div>
-
   </nav>
-
-
     <div id="container">
       <ul id="menu">
+        <li class="right" v-if="!loggedIn">
+          <form v-on:submit.prevent="login">
         <li><img id="scroll" src="../assets/scroll2.png"/></li>
-        <li class="right" v-if="loggedIn">
-  	      <router-link :to="{ name: 'BuildWill', params: {userID: user.id}}">{{user.username}}</router-link> <a @click="logout" href="#">Logout</a></p>
-        </li>
-        <li class="right" v-else>
-        	<form v-on:submit.prevent="login">
         	  <input v-model="email" placeholder="Email Address">
         	  <input v-model="password" type="password" placeholder="Password">
         	  <button class="primary" type="submit">Login</button>
         	</form>
+          <div class="flexWrapper errorPlace">
+            <p v-if="loginError" class="flexRight error">{{loginError}}</p><br><br>
+          </div>
         </li>
       </ul> 
-<!--       <div class="footer">  <p><a style = "color: black;" href="https://github.com/jcleona/Creative-Project-4"><br>See my code on github. <img id="git" src="../assets/GitHub-Mark.png"></a><br><br></p>
-  </div> -->
-     <div class="flexWrapper errorPlace">
-       <p v-if="loginError" class="flexRight error">{{loginError}}</p>
-     </div>
-     <div class="footer">  <p><a style = "color: black;" href="https://github.com/jcleona/Creative-Project-4"><br>See my code on github. <img id="git" src="../assets/GitHub-Mark.png"></a><br><br></p>
+     <div class="footer">  <p><a style = "color: black;" href="https://github.com/jcleona/newCreativeProject5"><br>See my code on github. <img id="git" src="../assets/GitHub-Mark.png"></a><br><br></p>
      </div>
    </div>
  </nav>
 </template>
 
 <script>
+import router from '../router/index.js';
  export default {
    name: 'AppHeader',
    data () {
      return {
-       keywords: '',
        email: '',
        password: '',
      }
@@ -82,17 +71,14 @@
      },
    },
    methods: {
-     search: function() {
-       this.$router.push({ path: '/search', query: { keywords: this.keywords }})
-       this.keywords = '';
-     },
      login: function() {
        this.$store.dispatch('login',{
          email: this.email,
          password: this.password,
        }).then(user => {
-	 this.email = '';
-	 this.password = '';
+    	 this.email = '';
+    	 this.password = '';
+       router.push({ path: '/' });
        });
      },
      logout: function() {
@@ -106,9 +92,11 @@
  input {
      font-size: 1.5vw;
      padding: 1.5vw;
+     border-radius: .5vw;
  }
  button {
      font-size: 1.5vw;
+     font-weight: bold;
      padding: .9vw;
      background-color: darkturquoise;
  }
@@ -117,7 +105,6 @@
      /*display: grid;*/
      margin-bottom: 0px;
  }
-
  ul {
      list-style-type:none;
      margin:0;
@@ -137,7 +124,7 @@
      color: #666;
  }
  a {
-  color: #42b983;
+     color: #42b983;
  }
  /*Active color*/
  li a.active {
@@ -145,19 +132,15 @@
  /*Hover state for top level links*/
  li:hover a {
  }
-/* input {
-     height: 0.5em;
- }*/
-
  .right {
      float: right;
  }
  .errorPlace {
-     height: 20px;
+     height: 2vw;
  }
  #scroll {
-     width: 8vw;
-     padding-bottom: 5vw; 
+     width: 12vw;
+     padding: 0 5vw 5vw 0; 
  }
  #container { 
    margin: 10 auto; 
@@ -169,7 +152,6 @@
  #brand {
    font-size: 3.5vw;
  }
-
  .footer {
    list-style-type:none;
    position: fixed;

@@ -15,11 +15,6 @@ export default new Router({
       name: 'HomePage',
       component: HomePage
     },
-    // {
-    // //   path: '/user/:userID',
-    // //   name: 'UserPage',
-    // //   component: UserPage
-    // // },
     {
       path: '/buildwill',
       name: 'BuildWill',

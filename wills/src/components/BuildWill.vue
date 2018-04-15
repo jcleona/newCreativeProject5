@@ -1,60 +1,12 @@
 <template>
   <div class="text-left">
-<!--     <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-warning">
-      <a class="navbar-brand" href="#">EasyWill</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Will</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#/ViewWill">View Will</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#/ListWills">List Wills</a>
-          </li>
-        </ul>
-      </div>
-    </nav> -->
-
     <div id="willForm" class="container">
     <form>
-      <p>Finish your will by filling out the following information: <p>
+      <p>Login if needed and then fill out the following information: <p>
       <div class="form-group">
         <label for="FormControlInput0">Title</label>
         <input v-model="title" type="text" class="form-control" id="FormControlInput0" placeholder="Give this will a title...">
       </div>
-<!--       <div class="form-group">
-        <label for="FormControlInput1">Name</label>
-        <input v-model="name" type="text" class="form-control" id="FormControlInput1" placeholder="Full Name...">
-      </div>
-       <div class="form-group">
-        <label for="FormControlInput2">Email address</label>
-        <input v-model="email" type="email" class="form-control" id="FormControlInput2" placeholder="name@example.com">
-        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-      </div>
-      <div class="form-group">
-        <label for="FormControlInput3">Street address</label>
-        <input v-model="address" type="text" class="form-control" id="FormControlInput3" placeholder="123 Main St.">
-      </div>
-       <div class="form-group">
-        <label for="FormControlInput4">City</label>
-        <input v-model="city" type="text" class="form-control" id="FormControlInput4" placeholder="Enter city...">
-      </div>
-      <div class="form-group">
-        <label for="FormControlInput5">State</label>
-        <input v-model="stateAbbr" type="text" class="form-control" id="FormControlInput5" placeholder="Enter two-letter state abbreviation...">
-      </div> -->
-  <!--     <div class="form-group">
-        <label for="FormControlInput6">Zip</label>
-        <input autocomplete="section-red shipping postal-code" v-model="zip" type="text" class="form-control" id="FormControlInput6" placeholder="Enter zip...">
-      </div> -->
       <div class="form-group">
         <label for="FormControlInput7">To whom would you like to leave your personal property?</label>
         <input v-model="beneficiary" type="name" class="form-control" id="FormControlInput7" placeholder="Full Name...">
@@ -63,30 +15,19 @@
         <label for="FormControlInput8">Who would you like to be the executor of your estate?</label>
         <input v-model="executor" type="name" class="form-control" id="FormControlInput8" placeholder="Full Name...">
       </div>
-<!--       <div class="form-group">
-        <label for="FormControlTextarea">List your personal property:</label>
-        <textarea v-model="property" class="form-control" id="FormControlTextarea" rows="6"></textarea>
-      </div> -->
       <div style = "background-color: Gainsboro;" class="text-center form-group form-control btn-outline-secondary">
         <button type="submit" v-on:click.prevent="buildWill" class="btn btn-default">Submit</button><br>
       </div>
-<!--       <div v-if="userSubmitted" style = "background-color: Gainsboro;" class="text-center form-group form-control btn-outline-secondary">
-        <button type="submit" v-on:click.prevent="buildWill" class="btn btn-default">Click Here to see your will below.</button><br>
-      </div> -->
       <div v-if="userSubmitted"  style = "background-color: Gainsboro;" class="text-center form-group form-control btn-outline-secondary">
         <button type="submit" v-on:click.prevent="newPage" class="btn btn-default">Click here to see your will in a new page.</button><br>
       </div>
     </form>
-    <!-- <a href="#/ViewWill">Click Here to See Your Will in a new page</a><br> -->
     <div>
-    <!-- <div v-if="readyWill"> -->
       <p v-for="part in willParts">
        {{ part }}</p>
     </div>
   </div>
   <br><br><br><br>
-<!--   <div class="footer">  <p><a style = "color: black;" href="https://github.com/jcleona/Creative-Project-4">See my code on github. <img id="git" src="../assets/GitHub-Mark.png"></a></p>
-  </div> -->
  </div>
 </template>
 
@@ -123,38 +64,15 @@ export default {
      will: function() {
        return this.$store.getters.will;
      },
-
-     // users: function() {
-     //   return this.$store.getters.users;
-     //   console.log('computed users: ', users);
-     // },
-     // user: function() {
-     //   return this.$store.getters.user;
-     //   console.log('computed user: ', user);
-     // }
   },
   created() {
-         // this.$store.dispatch('getFeed');
-     // this.$store.dispatch('getUser',{id:this.$route.params.userID});
      console.log('user.id: ', this.user.id);
      console.log('user: ', this.user);
      this.userSubmitted = false
   }, 
   methods: {
-
     newPage: function() {
-
-      console.log('in newPage function')
-          //   router.push({ name: link.name, params: link.params})
-          // } ,;
-          // logout: function ( ) {
-          //   $.ajax({
-          //     url: this.url + 'auth/logout',
-          //     success: data => {
-          //       router.push({name: 'Auth'});
-      // let willID = this.will.id;
       console.log('this.will.id', this.will.id,'this.id',this.id, 'will: ', this.will);
-      // console.log('willID: ', willID, ' this.user.id: ', this.user.id);
       router.push({ name: 'ViewWill', params: { willID: this.will.id} });
       console.log('in newPage function with user.id: ', this.user.id);
     },
@@ -170,7 +88,6 @@ export default {
        zip: this.zip,
        beneficiary: this.beneficiary,
        executor: this.executor,
-       // property: this.property,
        readyWill: false
         });
       console.log('finishing addUser, user.id: ', this.user.id);
@@ -181,33 +98,14 @@ export default {
     getUsers: function() {
       this.$store.dispatch('getUsers');
      },
-
-
-    // addWill: function() {
-    //   console.log('IN addWill FUNCTION, beneficiary: ' this.user.beneficiary);
-    //    this.$store.dispatch('addWill',{
-    //      user.id: this.user.id,
-    //      user.title: this.user.title,
-    //      user.beneficiary: this.user.beneficiary,
-    //      user.executor: this.user.executor,
-    //    });
-   //     .then(tweet => {
-   // // this.text = "";
-   // //     });
-   //    this.userSubmitted = true;
-   //  },
-
     buildWill: function () {
       console.log('in buildWill function: ', this.will);
-
-         this.$store.dispatch('addWill',{
+      this.$store.dispatch('addWill',{
          user_id: this.user.id,
          title: this.title,
          beneficiary: this.beneficiary,
          executor: this.executor,
        });
-
-
       this.willParts.splice(0, 1, 'LAST WILL AND TESTAMENT OF: ' + this.user.name);
       this.willParts.splice(1, 1, 'I, ' + this.user.name + ', of ' + this.user.city + ', ' + this.user.state + ', being of sound mind and body do hereby declare that this document is my last will and testament. ');
       this.willParts.splice(2, 1, 'In executing such document, I hereby declare that: ');
