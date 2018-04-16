@@ -12,13 +12,35 @@ app.use(express.static('public'));
 const env = process.env.NODE_ENV || 'development';
 const config = require('./knexfile')[env];  
 const knex = require('knex')(config);
-
+// jwt setup
+const jwt = require('jsonwebtoken');
+let jwtSecret = process.env.jwtSecret;
+if (jwtSecret === undefined) {
+  console.log("You need to define a jwtSecret environment variable to continue.");
+  knex.destroy();
+  process.exit();
+}
 // bcrypt setup
 let bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-// Login //
+// Verify the token that a client gives us.
+// This is setup as middleware, so it can be passed as an additional argument to Express after
+// the URL in any route. This will restrict access to only those clients who possess a valid token.
+const verifyToken = (req, res, next) => {
+  const token = req.headers['authorization'];
+  if (!token)
+    return res.status(403).send({ error: 'No token provided.' });
+    jwt.verify(token, jwtSecret, function(err, decoded) {
+    if (err)
+      return res.status(500).send({ error: 'Failed to authenticate token.' });
+    // if everything good, save to request for use in other routes
+    req.userID = decoded.id;
+    next();
+  });
+}
 
+// Login //
 app.post('/api/login', (req, res) => {
   if (!req.body.email || !req.body.password)
     return res.status(400).send();
@@ -29,9 +51,14 @@ app.post('/api/login', (req, res) => {
     }
     return [bcrypt.compare(req.body.password, user.hash),user];
   }).spread((result,user) => {
-    if (result)
-      res.status(200).json({user:{username:user.username,name:user.name,city: user.city, state:user.state, stateAbbr: user.stateAbbr, id:user.id}});
-    else
+    if (result) {
+       let token = jwt.sign({ id: user.id }, jwtSecret, {
+        expiresIn: 86400 // expires in 24 hours
+       });
+      res.status(200).json({user:{username:user.username,name:user.name,city: user.city, state:user.state, stateAbbr: user.stateAbbr,id:user.id},token:token});
+    } else {
+       res.status(403).send("Invalid credentials");
+    }
       res.status(403).send("Invalid credentials");
     return;
   }).catch(error => {
@@ -42,8 +69,7 @@ app.post('/api/login', (req, res) => {
   });
 });
 
-// Users //
-
+// Register //
 app.post('/api/users', (req, res) => {
   console.log('in post for register: ', req.body.username);
   if (!req.body.email || !req.body.password || !req.body.username || !req.body.name)
@@ -67,7 +93,10 @@ app.post('/api/users', (req, res) => {
     return knex('users').where('id',ids[0]).first().select('username','name','id', 'city', 'state', 'stateAbbr');
   }).then(user => {
     console.log('end of register in server - user: ', user);
-    res.status(200).json({user:user});
+    let token = jwt.sign({ id: user.id }, jwtSecret, {
+      expiresIn: 86400 // expires in 24 hours
+    });
+    res.status(200).json({user:user,token:token});
     return;
   }).catch(error => {
     if (error.message !== 'abort') {
@@ -76,7 +105,15 @@ app.post('/api/users', (req, res) => {
     }
   });
 });
-
+// Get user's account
+app.get('/api/me', verifyToken, (req,res) => {
+  knex('users').where('id',req.userID).first().select('username','name','id').then(user => {
+    res.status(200).json({user:user});
+  }).catch(error => {
+    res.status(500).json({ error });
+  });
+});
+// Get all of a user's wills
 app.get('/api/wills/:id/wills', (req, res) => {
   let id = parseInt(req.params.id);
   console.log('in app.get /api/wills/:id/wills in server.js with id: ', id);
@@ -101,9 +138,12 @@ app.get('/api/wills/:id', (req, res) => {
     res.status(500).json({ error });
   });
 });
-
-app.post('/api/users/:id/wills', (req, res) => {
+app.post('/api/users/:id/wills',  verifyToken, (req, res) => {
   let id = parseInt(req.params.id);
+  if (id !== req.userID) {
+    res.status(403).send();
+    return;
+  }
   knex('users').where('id',id).first().then(user => {
     return knex('wills').insert({user_id: id, title:req.body.title, beneficiary:req.body.beneficiary, executor:req.body.executor});
   }).then(ids => {

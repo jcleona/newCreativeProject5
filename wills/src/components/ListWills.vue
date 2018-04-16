@@ -34,7 +34,9 @@
 import router from '../router/index.js';
 export default {
   name: 'ListWills',
-  props: ['users', 'wills'],
+  props: ['users'
+  // , 'wills'
+  ],
   data () {
     return {
       signed: false,

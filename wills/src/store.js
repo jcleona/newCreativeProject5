@@ -5,13 +5,18 @@ import axios from 'axios';
 
 Vue.use(Vuex);
 
+const getAuthHeader = () => {
+  return { headers: {'Authorization': localStorage.getItem('token')}};
+}
+
 export default new Vuex.Store({
   state: {
     id: '',
     user: {},
     will: {},
     wills: [],
-    loggedIn: false,
+    // loggedIn: false,
+    token: '',
     loginError: '',
     registerError: '',
     feed: [],
@@ -22,7 +27,13 @@ export default new Vuex.Store({
     user: state => state.user,
     will: state => state.will,
     wills: state => state.wills,
-    loggedIn: state => state.loggedIn,
+    // loggedIn: state => state.loggedIn,
+    getToken: state => state.token,
+    loggedIn: state => {
+      if (state.token === '')
+       return false;
+       return true;
+    },
     loginError: state => state.loginError,
     registerError: state => state.registerError,
     userView: state => state.userView,
@@ -34,8 +45,13 @@ export default new Vuex.Store({
     setWill (state, will) {
       state.will = will;
     },
-    setLogin (state, status) {
-      state.loggedIn = status;
+
+    setToken (state, token) {
+      state.token = token;
+      if (token === '')
+        localStorage.removeItem('token');
+      else
+         localStorage.setItem('token', token)
     },
     setLoginError (state, message) {
       state.loginError = message;
@@ -48,16 +64,33 @@ export default new Vuex.Store({
     },
   },
 actions: {
+      // Initialize //
+    initialize(context) {
+      let token = localStorage.getItem('token');
+      if(token) {
+       // see if we can use the token to get my user account
+       axios.get("/api/me",getAuthHeader()).then(response => {
+         context.commit('setToken',token);
+         context.commit('setUser',response.data.user);
+       }).catch(err => {
+         // remove token and user from state
+         localStorage.removeItem('token');
+         context.commit('setUser',{}); 
+         context.commit('setToken','');
+       });
+      }
+    },
     // Registration, Login //
 register(context,user) {
   console.log('in register: ', user);
   return axios.post("/api/users",user).then(response => {
   	context.commit('setUser', response.data.user);
-  	context.commit('setLogin',true);
+  	context.commit('setToken',response.data.token);
   	context.commit('setRegisterError',"");
   	context.commit('setLoginError',"");
         }).catch(error => {
-  	context.commit('setLogin',false);
+    context.commit('setUser',{});   
+    context.commit('setToken','');
   	context.commit('setLoginError',"");
   	if (error.response) {
   	  if (error.response.status === 403)
@@ -72,11 +105,12 @@ register(context,user) {
 login(context,user) {
   return axios.post("/api/login",user).then(response => {
   	context.commit('setUser', response.data.user);
-  	context.commit('setLogin',true);
+    context.commit('setToken',response.data.token);
   	context.commit('setRegisterError',"");
   	context.commit('setLoginError',"");
         }).catch(error => {
-  	context.commit('setLogin',false);
+  	context.commit('setUser',{});
+    context.commit('setToken','');
   	context.commit('setRegisterError',"");
   	if (error.response) {
   	  if (error.response.status === 403 || error.response.status === 400)
@@ -91,7 +125,7 @@ login(context,user) {
  logout(context,user) {
     context.commit('setUser', {});
     context.commit('setWill', {});
-    context.commit('setLogin',false);
+    context.commit('setToken','');
     },
  getUser(context,user) {
     return axios.get("/api/users/" + user.id).then(response => {
@@ -120,7 +154,7 @@ login(context,user) {
 
   addWill(context,will) {
       console.log('in addWill to add a will for user.id: ', context.state.user.id, 'with title: ', will.title);
-      return axios.post("/api/users/" + context.state.user.id + "/wills",will).then(response => {
+      return axios.post("/api/users/" + context.state.user.id + "/wills",will,getAuthHeader()).then(response => {
       console.log('response.data.will: ', response.data.will);
 	    context.commit('setWill',response.data.will);
       console.log('after adding to database will: ', response.data.will);
@@ -131,7 +165,7 @@ login(context,user) {
  
   deleteWill(context,id) {
     console.log('in deleteWill with id: ', id);
-      return axios.delete("/api/wills/" + id).then(response => {
+    return axios.delete("/api/wills/" + id,getAuthHeader()).then(response => {
 	  context.dispatch('getWills');
       }).catch(err => {
 	  console.log("deleteWill failed:",err);

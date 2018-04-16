@@ -21,16 +21,16 @@ export default {
   name: 'ViewWill',
   data () {
     return {
-      name: '',
-      email: '',
-      address: '',
-      city: '',
-      state: '',
-      stateAbbr: '',
-      zip: '',
-      beneficiary: '',
-      executor: '',
-      property: '',
+      // name: '',
+      // email: '',
+      // address: '',
+      // city: '',
+      // state: '',
+      // stateAbbr: '',
+      // zip: '',
+      // beneficiary: '',
+      // executor: '',
+      // property: '',
       readyWill: false,
       noUserData: true,
       willParts: []
@@ -53,15 +53,15 @@ export default {
    created: function() {
 
      console.log('before dispatching to getWill, this.will, this.will.user_id: ', this.will, this.will.user_id);
-     this.$store.dispatch('getWill',{id:this.$route.params.willID});
-     this.$store.dispatch('getUser',{id:this.will.user_id});
+     // this.$store.dispatch('getWill',{id:this.$route.params.willID});
+     // this.$store.dispatch('getUser',{id:this.will.user_id});
      console.log('this.$route.params.willID: ', this.$route.params.willID);
      console.log('after routing to View Will ');
      if (this.user.name != undefined) {
        this.buildWill();
      } else { 
        this.noUserData = true;
-     }
+     };
      console.log('after returning from buildWill in View Will ', this.user);
      readyWill: true;
    },
